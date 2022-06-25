@@ -8,7 +8,7 @@
     "license": "MIT",
     "description": "A unity editor utility to generate pixel-art for your games.",
     "displayName": "Unity Pixelator",
-    "unity": "2021.0",
+    "unity": "2021.1",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },

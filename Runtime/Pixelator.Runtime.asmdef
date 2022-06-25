@@ -1,9 +1,14 @@
 {
-  "name": "ArashGh.Pixelator",
-  "references": [
-  ],
-  "optionalUnityReferences": [
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": []
+    "name": "ArashGh.Pixelator",
+    "rootNamespace": "ArashGh.Pixelator.Runtime",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
