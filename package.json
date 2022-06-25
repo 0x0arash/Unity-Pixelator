@@ -1,0 +1,23 @@
+{
+    "name": "com.arashgh.pixelator",
+    "version": "0.0.1",
+    "author": {
+        "name": "Arash Ghorban",
+        "url": "https://github.com/ArashGh"
+    },
+    "license": "MIT",
+    "description": "A unity editor utility to generate pixel-art for your games.",
+    "displayName": "Unity Pixelator",
+    "unity": "2021.0",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "unity",
+        "pixel-art",
+        "procedural",
+        "game",
+        "development"
+    ],
+    "dependencies": {}
+}

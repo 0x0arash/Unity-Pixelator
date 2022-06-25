@@ -1,0 +1,12 @@
+{
+  "name": "ArashGh.Pixelator.Editor",
+  "references": [
+    "ArashGh.Pixelator"
+  ],
+  "optionalUnityReferences": [
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": []
+}

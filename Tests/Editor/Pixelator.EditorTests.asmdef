@@ -1,0 +1,14 @@
+{
+  "name": "ArashGh.Pixelator.Editor.Tests",
+  "references": [
+    "ArashGh.Pixelator.Editor",
+    "ArashGh.Pixelator"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": []
+}
