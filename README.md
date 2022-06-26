@@ -103,7 +103,7 @@ I mainly started developing this package because I'm not an artist and sometimes
 ```
 
 ## Sample Output
-![Sample code output](Documentation/sample.png)
+<img src="Documentation/sample.png" width="256" height="256" />
 
 # Community
 If you have any suggestions or you found a problem in the package don't hesitate to tell me in [The Discussion](https://github.com/ArashGh/Unity-Pixelator/discussions) section.
