@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 
-namespace ArashGh.Pixelator.Samples
+namespace ArashGh.Pixelator.Runtime.Samples
 {
     public class BasicImageManipulation : MonoBehaviour
     {
