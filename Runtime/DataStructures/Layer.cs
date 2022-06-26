@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace ArashGh.Pixelator.Runtime.DataStructures
 {
-    public class Layer : IDrawable
+    public class Layer : IFillable
     {
-        private string _name;
+        private readonly string _name;
         private readonly Image _image;
 
         public string Name
@@ -29,6 +29,11 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
         {
             _name = name;
             _image = image;
+        }
+
+        public void Remove()
+        {
+            Image.RemoveLayer(this);
         }
     }
 }

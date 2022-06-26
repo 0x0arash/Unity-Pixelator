@@ -6,8 +6,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
 {
     public class Image : IDrawable
     {
-        private List<Layer> _layers;
-
+        private readonly List<Layer> _layers;
         private bool _renderLayersOnRender;
 
         public List<Layer> Layers
@@ -30,9 +29,10 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
         {
             _renderLayersOnRender = renderLayersOnRender;
 
-            _layers = new List<Layer>();
-
-            _layers.Add(new Layer("Base", this));
+            _layers = new List<Layer>
+            {
+                new Layer("Base", this)
+            };
         }
 
         public void SetRenderLayersOnRender(bool renderLayerOnRender)
@@ -52,7 +52,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
                     for (int j = 0; j < Width; j++)
                     {
                         var currentColor = GetPixelColor(j, i);
-                        var layerColor = layer.GetPixelColor(i, j);
+                        var layerColor = layer.GetPixelColor(j, i);
 
                         SetPixelColor(j, i, Color.Lerp(currentColor, layerColor, layerColor.a));
                     }
@@ -92,6 +92,16 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             _layers.Insert(_layers.FindIndex(l => l.Name == underName) + 1, newLayer);
 
             return newLayer;
+        }
+
+        public void RemoveLayer(string name)
+        {
+            _layers.Remove(this[name]);
+        }
+
+        public void RemoveLayer(Layer layer)
+        {
+            _layers.Remove(layer);
         }
     }
 }
