@@ -17,6 +17,8 @@ I mainly started developing this package because I'm not an artist and sometimes
 - Enter "https://github.com/ArashGh/Unity-Pixelator.git"
 - Apply
 
+-- Tested with **Unity 2021**
+
 # Example
 
 ```c#
