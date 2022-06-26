@@ -1,0 +1,16 @@
+{
+    "name": "Pixelator.Samples",
+    "rootNamespace": "ArashGh.Pixelator.Samples",
+    "references": [
+        "ArashGh.Pixelator"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
