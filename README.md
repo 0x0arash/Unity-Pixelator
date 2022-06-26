@@ -10,6 +10,13 @@ Pixelator is a Unity package which allows you to generate and design pixel art p
 
 I mainly started developing this package because I'm not an artist and sometimes I feel much easier expressing what I want in my game art with code.
 
+# Install
+
+- Open Unity Package Manager
+- Click the "+" icon and choose "add package from git url"
+- Enter "https://github.com/ArashGh/Unity-Pixelator.git"
+- Apply
+
 # Example
 
 ```c#
