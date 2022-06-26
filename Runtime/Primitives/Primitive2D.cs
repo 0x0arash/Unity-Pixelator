@@ -82,7 +82,7 @@ namespace ArashGh.Pixelator.Runtime.Primitives
                 }
             }
 
-            if (fill)
+            if (fill && radius > 0)
             {
                 newLayer.FloodFill(fillColor, position.x, position.y);
             }

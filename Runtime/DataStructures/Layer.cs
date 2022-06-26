@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ArashGh.Pixelator.Runtime.DataStructures
 {
-    public class Layer : IFillable
+    public class Layer : ISelectable
     {
         private readonly string _name;
         private readonly Image _image;

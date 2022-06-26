@@ -33,18 +33,17 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
 
         private void InternalFloodFill(Color color, int x, int y, Color startColor)
         {
+            if (x < 0 || y < 0 || x >= Width || y >= Height)
+                return;
             if (GetPixelColor(x, y) != startColor)
                 return;
 
-            if (x > 0 && x < Width - 1 && y > 0 && y < Height - 1)
-            {
-                SetPixelColor(x, y, color);
+            SetPixelColor(x, y, color);
 
-                InternalFloodFill(color, x + 1, y, startColor);
-                InternalFloodFill(color, x - 1, y, startColor);
-                InternalFloodFill(color, x, y + 1, startColor);
-                InternalFloodFill(color, x, y - 1, startColor);
-            }
+            InternalFloodFill(color, x - 1, y, startColor);
+            InternalFloodFill(color, x + 1, y, startColor);
+            InternalFloodFill(color, x, y - 1, startColor);
+            InternalFloodFill(color, x, y + 1, startColor);
         }
     }
 }
