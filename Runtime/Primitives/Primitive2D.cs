@@ -7,7 +7,7 @@ namespace ArashGh.Pixelator.Runtime.Primitives
 {
     public static class Primitive2D
     {
-        public static void DrawLine(Layer layer, Vector2Int start, Vector2Int end, Color color, bool pixelPerfect = true)
+        public static void DrawLine(Layer layer, Vector2Int start, Vector2Int end, Color32 color, bool pixelPerfect = true)
         {
             if (pixelPerfect)
             {
@@ -47,7 +47,7 @@ namespace ArashGh.Pixelator.Runtime.Primitives
             }
         }
 
-        public static void DrawCircle(Layer layer, Vector2Int position, int radius, Color outlineColor, bool fill = false, Color fillColor = default)
+        public static void DrawCircle(Layer layer, Vector2Int position, int radius, Color32 outlineColor, bool fill = false, Color32 fillColor = default)
         {
             var newLayer = layer.Image.InsertLayerOnBottom("Temp");
 

@@ -25,7 +25,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             }
         }
 
-        public Image(int width, int height, bool renderLayersOnRender) : base(width, height)
+        public Image(int width, int height, bool renderLayersOnRender) : base(width, height, null)
         {
             _renderLayersOnRender = renderLayersOnRender;
 
@@ -42,19 +42,22 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
 
         public override Texture2D Render()
         {
-            foreach (Layer layer in _layers)
+            if (NeedRender)
             {
-                if (_renderLayersOnRender)
-                    layer.Render();
-
-                for (int i = 0; i < Height; i++)
+                foreach (Layer layer in _layers)
                 {
-                    for (int j = 0; j < Width; j++)
-                    {
-                        var currentColor = GetPixelColor(j, i);
-                        var layerColor = layer.GetPixelColor(j, i);
+                    if (_renderLayersOnRender)
+                        layer.Render();
 
-                        SetPixelColor(j, i, Color.Lerp(currentColor, layerColor, layerColor.a));
+                    for (int i = 0; i < Height; i++)
+                    {
+                        for (int j = 0; j < Width; j++)
+                        {
+                            var currentColor = GetPixelColor(j, i);
+                            var layerColor = layer.GetPositionedPixelColor(j, i);
+
+                            SetPixelColor(j, i, Color32.Lerp(currentColor, layerColor, layerColor.a));
+                        }
                     }
                 }
             }

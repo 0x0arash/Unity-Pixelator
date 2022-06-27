@@ -1,3 +1,4 @@
+using ArashGh.Pixelator.Runtime.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
         private List<Vector2Int> _selections = new List<Vector2Int>();
         private List<Vector2Int> _tempSelection = new List<Vector2Int>();
 
-        public ISelectable(int width, int height) : base(width, height)
+        public ISelectable(int width, int height, IDrawable parent) : base(width, height, parent)
         {
         }
 
@@ -80,14 +81,14 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             IsSelected = _selections.Count > 0;
         }
 
-        private void InternalMagicSelect(int x, int y, Color startColor, SelectionType2D selectionType = 0)
+        private void InternalMagicSelect(int x, int y, Color32 startColor, SelectionType2D selectionType = 0)
         {
             var isSelected = _tempSelection.Contains(new Vector2Int(x, y));
             if (x < 0 || y < 0 || x >= Width || y >= Height)
                 return;
             if (isSelected)
                 return;
-            if (GetPixelColor(x, y) != startColor)
+            if (!GetPixelColor(x, y).IsEqualTo(startColor))
                 return;
 
             SelectPositionTo(x, y, ref _tempSelection, selectionType);
@@ -140,7 +141,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             _tempSelection.Clear();
         }
 
-        public void FillSelection(Color color)
+        public void FillSelection(Color32 color)
         {
             foreach (var selection in _selections)
             {

@@ -12,6 +12,11 @@ namespace ArashGh.Pixelator.Samples
     {
         Image image;
 
+        Layer movableLayer;
+
+        Vector3 lastMousePos;
+        bool moving = false;
+
         void Start()
         {
             //============Uncomment to time the operations
@@ -40,13 +45,13 @@ namespace ArashGh.Pixelator.Samples
             image.InsertLayerUnder("HiddenUnder", "Background");
             image["HiddenUnder"].Fill(Color.red);
 
-            image.InsertLayerAbove("Pattern", "Background");
+            movableLayer = image.InsertLayerAbove("Pattern", "Background");
 
             // You can set and manipulate pixels on a layer in any way you want
             for (int i = 0; i < 64 * 64; i++)
             {
                 if (i % 4 == 0)
-                    image["Pattern"].SetPixelColor(i % 64, i / 64, Color.blue);
+                    movableLayer.SetPixelColor(i % 64, i / 64, Color.blue);
             }
 
             // The Primitive2D class helps you draw simple shapes such as Lines and Circles
@@ -60,32 +65,58 @@ namespace ArashGh.Pixelator.Samples
             // => Add (Adds the new selection to the previous selection)
 
             // RectangleSelect lets you select a rectangular area
-            image["Pattern"].RectangleSelect(new Vector2Int(35, 15), new Vector2Int(63, 63));
+            movableLayer.RectangleSelect(new Vector2Int(35, 15), new Vector2Int(63, 63));
 
             // You can then fill the selected pixels with the color you like
-            image["Pattern"].FillSelection(Color.red);
+            movableLayer.FillSelection(Color.red);
 
-            image["Pattern"].RectangleSelect(new Vector2Int(0, 63), new Vector2Int(15, 15));
+            movableLayer.RectangleSelect(new Vector2Int(0, 63), new Vector2Int(15, 15));
 
             // MagicSelect lets you select the connected pixels with the same color starting from the position you specify (You know what magic wand does, right?)
-            image["Pattern"].MagicSelect(new Vector2Int(5, 0), SelectionType2D.Remove);
-            image["Pattern"].FillSelection(Color.magenta);
+            movableLayer.MagicSelect(new Vector2Int(5, 0), SelectionType2D.Remove);
+            movableLayer.FillSelection(Color.magenta);
 
             // The Render method on Image or Layer object will render the pixel color buffer to a Texture2D inside the object
             image.Render();
 
             //============Uncomment to time the operations
             //sw.Stop();
-            //print($"{sw.ElapsedMilliseconds}");
+            //UnityEngine.Debug.Log($"{sw.ElapsedMilliseconds}");
             //sw.Restart();
 
 
             // The ExportRenderedImage on the Image objects or Layer objects lets you export the corrosponding Image or Layer's content to a png file at the location you specify
-            image.ExportRenderedImage(Path.Combine(Application.dataPath, "test.png"));
+            //image.ExportRenderedImage(Path.Combine(Application.dataPath, "test.png"));
 
             //============Uncomment to time the operations
             //sw.Stop();
-            //print($"{sw.ElapsedMilliseconds}");
+            //UnityEngine.Debug.Log($"{sw.ElapsedMilliseconds}");
+        }
+
+        private void Update()
+        {
+            if (movableLayer == null)
+                return;
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                moving = true;
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                moving = false;
+            }
+
+            if (moving)
+            {
+                var dPos = -(Input.mousePosition - lastMousePos) / 5;
+
+                movableLayer.Move((int)dPos.x, (int)dPos.y);
+                image.Render();
+            }
+
+            lastMousePos = Input.mousePosition;
         }
 
         private void OnGUI()

@@ -7,7 +7,6 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
     public class Layer : ISelectable
     {
         private readonly string _name;
-        private readonly Image _image;
 
         public string Name
         {
@@ -21,19 +20,23 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
         {
             get
             {
-                return _image;
+                return (Image)_parent;
             }
         }
 
-        public Layer(string name, Image image) : base(image.Width, image.Height)
+        public Layer(string name, Image image) : base(image.Width, image.Height, image)
         {
             _name = name;
-            _image = image;
         }
 
         public void Remove()
         {
             Image.RemoveLayer(this);
+        }
+
+        public void Move(int x, int y)
+        {
+            ChangePosition(x, y);
         }
     }
 }
