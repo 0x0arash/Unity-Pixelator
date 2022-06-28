@@ -7,7 +7,7 @@ namespace ArashGh.Pixelator.Runtime.Primitives
 {
     public static class Primitive2D
     {
-        public static void DrawLine(Layer layer, Vector2Int start, Vector2Int end, Color color, bool pixelPerfect = true)
+        public static void DrawLine(Layer layer, Vector2Int start, Vector2Int end, Color32 color, bool pixelPerfect = true)
         {
             if (pixelPerfect)
             {
@@ -47,9 +47,9 @@ namespace ArashGh.Pixelator.Runtime.Primitives
             }
         }
 
-        public static void DrawCircle(Layer layer, Vector2Int position, int radius, Color outlineColor, bool fill = false, Color fillColor = default)
+        public static void DrawCircle(Layer layer, Vector2Int position, int radius, Color32 outlineColor, bool fill = false, Color32 fillColor = default)
         {
-            var newLayer = layer.Image.InsertLayerOnBottom("Temp");
+            var newLayer = new Layer("TemporaryPrimitive", layer.Width, layer.Height);
 
             int y = radius, x = 0, d = 1 - radius;
 
@@ -87,8 +87,7 @@ namespace ArashGh.Pixelator.Runtime.Primitives
                 newLayer.FloodFill(fillColor, position.x, position.y);
             }
 
-            layer.MergeLayerOnTop(newLayer);
-            newLayer.Remove();
+            layer.WriteLayerOnTop(newLayer);
         }
     }
 }
