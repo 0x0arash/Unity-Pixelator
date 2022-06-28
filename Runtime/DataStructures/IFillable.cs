@@ -34,8 +34,6 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
 
         private void InternalFloodFill(Color32 color, int x, int y, Color32 startColor)
         {
-            if (x < 0 || y < 0 || x >= Width || y >= Height)
-                return;
             if (!GetPixelColor(x, y).IsEqualTo(startColor))
                 return;
 

@@ -51,10 +51,11 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
                 for (int i = 0; i < _layers.Count; i++)
                 {
                     Layer layer = _layers[i];
+
                     _renderLayer.WriteLayerOnTop(layer);
                 }
 
-                return _renderLayer.Render();
+                _renderLayer.Render();
             }
 
             return _renderLayer.GetRenderedTexture();

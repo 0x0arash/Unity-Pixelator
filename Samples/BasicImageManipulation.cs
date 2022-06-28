@@ -1,5 +1,6 @@
 using ArashGh.Pixelator.Runtime.DataStructures;
 using ArashGh.Pixelator.Runtime.Primitives;
+using System;
 using UnityEngine;
 
 namespace ArashGh.Pixelator.Samples
@@ -7,11 +8,11 @@ namespace ArashGh.Pixelator.Samples
     public class BasicImageManipulation : MonoBehaviour
     {
         Image image;
-
+        Vector2Int dPos;
         Layer movableLayer;
 
         Vector3 lastMousePos;
-        bool moving = false;
+        bool movingLayer = false;
 
         private void Start()
         {
@@ -21,31 +22,37 @@ namespace ArashGh.Pixelator.Samples
 
         void Test1()
         {
-            image = new Image(64, 64);
+            image = new Image(32, 32);
 
             // image["Base"].Fill(Color.black);
             movableLayer = image["Base"];
 
             // You can set and manipulate pixels on a layer in any way you want
-            for (int i = 0; i < 64 * 64; i++)
+            for (int i = 0; i < 32 * 32; i++)
             {
                 if (i % 4 == 0)
-                    movableLayer.SetPixelColor(i % 64, i / 64, Color.blue);
+                    movableLayer.SetPixelColor(i % 32, i / 32, Color.blue);
             }
 
-            movableLayer.RectangleSelect(new Vector2Int(10, 10), new Vector2Int(25, 15), SelectionType2D.Replace);
-            movableLayer.ApplySelection();
+            movableLayer.SetPixelColor(0, 0, Color.red);
+            movableLayer.SetPixelColor(10, 5, Color.red);
 
-            // MoveSelection will move the selected pixels by the specified amount
-            movableLayer.MoveSelection(12, 20);
-            movableLayer.FillSelection(Color.white);
-            movableLayer.Deselect();
+
 
             Primitive2D.DrawCircle(movableLayer, new Vector2Int(20, 35), 10, Color.white, true, Color.grey);
-            movableLayer.MagicSelect(new Vector2Int(20, 35));
+            movableLayer.MagicSelect(new Vector2Int(20, 30));
             movableLayer.ApplySelection();
             movableLayer.FillSelection(Color.red);
             movableLayer.MoveSelection(-20, 0);
+            movableLayer.Deselect();
+
+
+            movableLayer.RectangleSelect(new Vector2Int(0, 0), new Vector2Int(15, 5), SelectionType2D.Replace);
+            movableLayer.ApplySelection();
+
+            // MoveSelection will move the selected pixels by the specified amount
+            movableLayer.MoveSelection(20 ,18);
+            movableLayer.FillSelection(Color.white);
             movableLayer.Deselect();
 
             image.Render();
@@ -114,7 +121,7 @@ namespace ArashGh.Pixelator.Samples
             movableLayer.FillSelection(Color.magenta);
 
             // Calling Deselect will apply the changes done to the selection and apply them to the corrosponding layer
-            movableLayer.Deselect();
+            //movableLayer.Deselect();
 
             // The Render method on Image or Layer object will render the pixel color buffer to a Texture2D inside the object
             image.Render();
@@ -140,18 +147,18 @@ namespace ArashGh.Pixelator.Samples
 
             if (Input.GetMouseButtonDown(0))
             {
-                moving = true;
+                movingLayer = true;
                 lastMousePos = Input.mousePosition;
             }
 
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
             {
-                moving = false;
+                movingLayer = false;
             }
 
-            if (moving)
+            if (movingLayer)
             {
-                Vector2Int dPos = new Vector2Int((int)(Input.mousePosition.x - lastMousePos.x), (int)(Input.mousePosition.y - lastMousePos.y));
+                dPos = new Vector2Int((int)(Input.mousePosition.x - lastMousePos.x), (int)(Input.mousePosition.y - lastMousePos.y));
                 dPos /= 4;
                 if (Mathf.Abs(dPos.x) > 0 || Mathf.Abs(dPos.y) > 0)
                 {

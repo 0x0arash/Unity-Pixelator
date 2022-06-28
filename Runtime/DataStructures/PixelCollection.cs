@@ -6,9 +6,10 @@ using UnityEngine;
 
 namespace ArashGh.Pixelator.Runtime.DataStructures
 {
-    public class PixelCollection : Dictionary<Tuple<int, int>, Color32>
+    public class PixelCollection : Dictionary<Vector2Int, Color32>
     {
         private int _width, _height;
+        private int _minX, _minY, _maxX, _maxY;
 
         public PixelCollection(int width, int height) : this(width, height, new Color32(0, 0, 0, 0))
         {
@@ -18,6 +19,11 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
         {
             _width = width;
             _height = height;
+
+            _minX = 0;
+            _minY = 0;
+            _maxX = width;
+            _maxY = height;
 
             for (int y = 0; y < _height; y++)
             {
@@ -32,7 +38,10 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
         {
             get
             {
-                var compKey = Tuple.Create(x, y);
+                if (x < _minX || x > _maxX || y < _minY || y > _maxY)
+                    return new Color32(0, 0, 0, 0);
+
+                var compKey = new Vector2Int(x, y);
 
                 if (!ContainsKey(compKey))
                 {
@@ -44,7 +53,9 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
 
             set
             {
-                var compKey = Tuple.Create(x, y);
+                SetMinMax(x, y);
+
+                var compKey = new Vector2Int(x, y);
                 if (!ContainsKey(compKey))
                 {
                     Add(compKey, value);
@@ -54,6 +65,18 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
                     this[compKey] = value;
                 }
             }
+        }
+
+        public void SetMinMax(int x, int y)
+        {
+            if (x < _minX)
+                _minX = x;
+            if (y < _minY)
+                _minY = y;
+            if (x > _maxX)
+                _maxX = x;
+            if (y > _maxY)
+                _maxY = y;
         }
     }
 }
