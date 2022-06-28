@@ -49,7 +49,7 @@ namespace ArashGh.Pixelator.Runtime.Primitives
 
         public static void DrawCircle(Layer layer, Vector2Int position, int radius, Color32 outlineColor, bool fill = false, Color32 fillColor = default)
         {
-            var newLayer = layer.Image.InsertLayerOnBottom("Temp");
+            var newLayer = new Layer("TemporaryPrimitive", layer.Width, layer.Height);
 
             int y = radius, x = 0, d = 1 - radius;
 
@@ -87,8 +87,7 @@ namespace ArashGh.Pixelator.Runtime.Primitives
                 newLayer.FloodFill(fillColor, position.x, position.y);
             }
 
-            layer.MergeLayerOnTop(newLayer);
-            newLayer.Remove();
+            layer.WriteLayerOnTop(newLayer);
         }
     }
 }

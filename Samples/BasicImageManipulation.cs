@@ -1,9 +1,5 @@
 using ArashGh.Pixelator.Runtime.DataStructures;
 using ArashGh.Pixelator.Runtime.Primitives;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using UnityEngine;
 
 namespace ArashGh.Pixelator.Samples
@@ -17,14 +13,52 @@ namespace ArashGh.Pixelator.Samples
         Vector3 lastMousePos;
         bool moving = false;
 
-        void Start()
+        private void Start()
+        {
+            Test1();
+            // Test2();
+        }
+
+        void Test1()
+        {
+            image = new Image(64, 64);
+
+            // image["Base"].Fill(Color.black);
+            movableLayer = image["Base"];
+
+            // You can set and manipulate pixels on a layer in any way you want
+            for (int i = 0; i < 64 * 64; i++)
+            {
+                if (i % 4 == 0)
+                    movableLayer.SetPixelColor(i % 64, i / 64, Color.blue);
+            }
+
+            movableLayer.RectangleSelect(new Vector2Int(10, 10), new Vector2Int(25, 15), SelectionType2D.Replace);
+            movableLayer.ApplySelection();
+
+            // MoveSelection will move the selected pixels by the specified amount
+            movableLayer.MoveSelection(12, 20);
+            movableLayer.FillSelection(Color.white);
+            movableLayer.Deselect();
+
+            Primitive2D.DrawCircle(movableLayer, new Vector2Int(20, 35), 10, Color.white, true, Color.grey);
+            movableLayer.MagicSelect(new Vector2Int(20, 35));
+            movableLayer.ApplySelection();
+            movableLayer.FillSelection(Color.red);
+            movableLayer.MoveSelection(-20, 0);
+            movableLayer.Deselect();
+
+            image.Render();
+        }
+
+        void Test2()
         {
             //============Uncomment to time the operations
             //Stopwatch sw = new Stopwatch();
             //sw.Start();
 
             // Creating a new Image
-            image = new Image(64, 64, false);
+            image = new Image(64, 64);
 
             // Each Image starts with a layer called "Base"
             // You can access different layers of an Image using the [] (bracket) operator and passing the layer name
@@ -59,6 +93,7 @@ namespace ArashGh.Pixelator.Samples
             Primitive2D.DrawCircle(image["Top"], new Vector2Int(20, 35), 10, Color.white, true, Color.grey);
 
             // There is a Selection system with basic tools for now. (WIP)
+            // Remember to call ApplySelection to actually select
             // There are 3 different Selection modes. (Default is Replace any previous selection)
             // => Remove (Removes the new selection from the previous selection)
             // => Replace (Replaces the old selection with the new selected pixels) (This is the default behaviour if you don't specify the selection type)
@@ -66,6 +101,7 @@ namespace ArashGh.Pixelator.Samples
 
             // RectangleSelect lets you select a rectangular area
             movableLayer.RectangleSelect(new Vector2Int(35, 15), new Vector2Int(63, 63));
+            movableLayer.ApplySelection();
 
             // You can then fill the selected pixels with the color you like
             movableLayer.FillSelection(Color.red);
@@ -74,7 +110,11 @@ namespace ArashGh.Pixelator.Samples
 
             // MagicSelect lets you select the connected pixels with the same color starting from the position you specify (You know what magic wand does, right?)
             movableLayer.MagicSelect(new Vector2Int(5, 0), SelectionType2D.Remove);
+            movableLayer.ApplySelection();
             movableLayer.FillSelection(Color.magenta);
+
+            // Calling Deselect will apply the changes done to the selection and apply them to the corrosponding layer
+            movableLayer.Deselect();
 
             // The Render method on Image or Layer object will render the pixel color buffer to a Texture2D inside the object
             image.Render();
@@ -101,6 +141,7 @@ namespace ArashGh.Pixelator.Samples
             if (Input.GetMouseButtonDown(0))
             {
                 moving = true;
+                lastMousePos = Input.mousePosition;
             }
 
             if (Input.GetMouseButtonUp(0))
@@ -110,13 +151,18 @@ namespace ArashGh.Pixelator.Samples
 
             if (moving)
             {
-                var dPos = -(Input.mousePosition - lastMousePos) / 5;
+                Vector2Int dPos = new Vector2Int((int)(Input.mousePosition.x - lastMousePos.x), (int)(Input.mousePosition.y - lastMousePos.y));
+                dPos /= 4;
+                if (Mathf.Abs(dPos.x) > 0 || Mathf.Abs(dPos.y) > 0)
+                {
+                    lastMousePos = Input.mousePosition;
 
-                movableLayer.Move((int)dPos.x, (int)dPos.y);
-                image.Render();
+                    // The Move Layer on the Layer objects moves the whole layer by the amount you provide
+                    movableLayer.Move(dPos.x, dPos.y);
+                }
             }
 
-            lastMousePos = Input.mousePosition;
+            image.Render();
         }
 
         private void OnGUI()

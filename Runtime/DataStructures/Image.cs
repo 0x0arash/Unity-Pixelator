@@ -4,10 +4,12 @@ using UnityEngine;
 
 namespace ArashGh.Pixelator.Runtime.DataStructures
 {
-    public class Image : IDrawable
+    public class Image
     {
+        private int _width, _height;
+
         private readonly List<Layer> _layers;
-        private bool _renderLayersOnRender;
+        protected internal Layer _renderLayer;
 
         public List<Layer> Layers
         {
@@ -17,6 +19,9 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             }
         }
 
+        public int Width { get => _width; }
+        public int Height { get => _height; }
+
         public Layer this[string layerName]
         {
             get
@@ -25,44 +30,39 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             }
         }
 
-        public Image(int width, int height, bool renderLayersOnRender) : base(width, height, null)
+        public Image(int width, int height)
         {
-            _renderLayersOnRender = renderLayersOnRender;
+            _width = width;
+            _height = height;
 
+            _renderLayer = new Layer("RenderLayer", _width, _height);
             _layers = new List<Layer>
             {
                 new Layer("Base", this)
             };
         }
 
-        public void SetRenderLayersOnRender(bool renderLayerOnRender)
+        public Texture2D Render(bool forceRender = false)
         {
-            _renderLayersOnRender = renderLayerOnRender;
-        }
-
-        public override Texture2D Render()
-        {
-            if (NeedRender)
+            if (_renderLayer.NeedRender || forceRender)
             {
-                foreach (Layer layer in _layers)
+                _renderLayer.Clear();
+
+                for (int i = 0; i < _layers.Count; i++)
                 {
-                    if (_renderLayersOnRender)
-                        layer.Render();
-
-                    for (int i = 0; i < Height; i++)
-                    {
-                        for (int j = 0; j < Width; j++)
-                        {
-                            var currentColor = GetPixelColor(j, i);
-                            var layerColor = layer.GetPositionedPixelColor(j, i);
-
-                            SetPixelColor(j, i, Color32.Lerp(currentColor, layerColor, layerColor.a));
-                        }
-                    }
+                    Layer layer = _layers[i];
+                    _renderLayer.WriteLayerOnTop(layer);
                 }
+
+                return _renderLayer.Render();
             }
 
-            return base.Render();
+            return _renderLayer.GetRenderedTexture();
+        }
+
+        public Texture2D GetRenderedTexture()
+        {
+            return _renderLayer.GetRenderedTexture();
         }
 
         public Layer InsertLayerOnTop(string name)

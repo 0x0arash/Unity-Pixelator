@@ -15,7 +15,14 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
 
     public class ISelectable : IFillable
     {
-        public bool IsSelected { get; private set; } = false;
+        public bool IsSelected
+        {
+            get
+            {
+                return _selections.Count > 0;
+            }
+        }
+
         public List<Vector2Int> Selections
         {
             get
@@ -24,11 +31,35 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             }
         }
 
+        private Layer _selectionLayer;
         private List<Vector2Int> _selections = new List<Vector2Int>();
         private List<Vector2Int> _tempSelection = new List<Vector2Int>();
 
         public ISelectable(int width, int height, IDrawable parent) : base(width, height, parent)
         {
+            if (parent != null)
+                _selectionLayer = new Layer("Selection", width, height);
+        }
+
+        public Layer GetSelection()
+        {
+            return _selectionLayer;
+        }
+
+        public void ApplySelection()
+        {
+            if (_selectionLayer == null)
+                return;
+            if (_selections.Count == 0)
+                return;
+
+            foreach (var selection in _selections)
+            {
+                _selectionLayer.SetPixelColor(selection, GetPixelColor(selection));
+                SetPixelColor(selection, new Color32(0, 0, 0, 0));
+            }
+
+            _overlay = _selectionLayer;
         }
 
         public void RectangleSelect(Vector2Int start, Vector2Int end, SelectionType2D selectionType = 0)
@@ -38,10 +69,10 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
 
             int startY = y;
 
+            _tempSelection.Clear();
             if (selectionType == 0)
             {
                 _selections.Clear();
-                _tempSelection.Clear();
             }
 
             while (x <= targetX)
@@ -55,18 +86,16 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
                 x += 1;
                 y = startY;
             }
-
-            IsSelected = _selections.Count > 0;
         }
 
         public void MagicSelect(Vector2Int startPosition, SelectionType2D selectionType = 0)
         {
             var startColor = GetPixelColor(startPosition);
 
+            _tempSelection.Clear();
             if (selectionType == 0)
             {
                 _selections.Clear();
-                _tempSelection.Clear();
             }
 
             InternalMagicSelect(startPosition.x, startPosition.y, startColor, selectionType);
@@ -77,13 +106,13 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             }
 
             _tempSelection.Clear();
-
-            IsSelected = _selections.Count > 0;
         }
 
         private void InternalMagicSelect(int x, int y, Color32 startColor, SelectionType2D selectionType = 0)
         {
-            var isSelected = _tempSelection.Contains(new Vector2Int(x, y));
+            var position = new Vector2Int(x, y);
+            var isSelected = _tempSelection.Contains(position);
+
             if (x < 0 || y < 0 || x >= Width || y >= Height)
                 return;
             if (isSelected)
@@ -91,7 +120,10 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             if (!GetPixelColor(x, y).IsEqualTo(startColor))
                 return;
 
-            SelectPositionTo(x, y, ref _tempSelection, selectionType);
+            if (!_tempSelection.Contains(position))
+            {
+                _tempSelection.Add(position);
+            }
 
             InternalMagicSelect(x - 1, y, startColor, selectionType);
             InternalMagicSelect(x + 1, y, startColor, selectionType);
@@ -124,29 +156,55 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             }
         }
 
-        private void SelectPositionTo(int x, int y, ref List<Vector2Int> selectionList, SelectionType2D selectionType = 0)
-        {
-            var position = new Vector2Int(x, y);
-
-            if (!selectionList.Contains(position))
-            {
-                selectionList.Add(position);
-            }
-        }
-
         public void Deselect()
         {
-            IsSelected = false;
+            WriteLayerOnTop(_selectionLayer);
+
+            _selectionLayer.MoveTo(0, 0);
+            _selectionLayer.Clear();
             _selections.Clear();
             _tempSelection.Clear();
+            _overlay = null;
         }
 
         public void FillSelection(Color32 color)
         {
+            if (!IsSelected)
+                return;
+
             foreach (var selection in _selections)
             {
-                SetPixelColor(selection, color);
+                _selectionLayer.SetPixelColor(selection, color);
             }
+        }
+
+        public void MoveSelection(Vector2Int dPos)
+        {
+            MoveSelection(dPos.x, dPos.y);
+        }
+
+        public void MoveSelection(int x, int y)
+        {
+            //var tLayer = LayerFromSelection();
+
+            //for (int i = 0; i < _selections.Count; i++)
+            //{
+            //    var s = _selections[i];
+            //    SetPixelColor(new Vector2Int(s.x, s.y), new Color32(0, 0, 0, 0));
+            //    _selections[i] = new Vector2Int(s.x + x, s.y + y);
+            //}
+
+            //tLayer.Move(x, y);
+            if (_selectionLayer == null)
+                return;
+
+            if (!IsSelected)
+                return;
+
+
+            _selectionLayer.Move(x, y);
+
+            //MergeLayerOnTop(tLayer);
         }
     }
 }

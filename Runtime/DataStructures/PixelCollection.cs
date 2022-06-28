@@ -19,11 +19,11 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             _width = width;
             _height = height;
 
-            for (int i = 0; i < _height; i++)
+            for (int y = 0; y < _height; y++)
             {
-                for (int j = 0; j < _width; j++)
+                for (int x = 0; x < _width; x++)
                 {
-                    this[j, i] = color;
+                    this[x, y] = color;
                 }
             }
         }
@@ -54,21 +54,6 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
                     this[compKey] = value;
                 }
             }
-        }
-
-        public Color32[] ViewableAreaArray(Vector2Int position)
-        {
-            var result = new Color32[_width * _height];
-
-            for (int i = 0; i < _height; i++)
-            {
-                for (int j = 0; j < _width; j++)
-                {
-                    result[i * _width + j] = this[j + position.x, i + position.y];
-                }
-            }
-
-            return result;
         }
     }
 }
