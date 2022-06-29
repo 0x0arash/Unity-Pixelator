@@ -110,7 +110,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             return _texture;
         }
 
-        protected Color32 GetPixelColor(int x, int y)
+        public Color32 GetPixelColor(int x, int y)
         {
             var pos = _position;
             if (_parent != null)
@@ -125,7 +125,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             return _pixels[x - pos.x, y - pos.y];
         }
 
-        protected Color32 GetRawPixelColor(int x, int y)
+        protected internal Color32 GetRawPixelColor(int x, int y)
         {
             //if (_overlay != null)
             //{
@@ -141,7 +141,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             //    _pixels[x, y];
         }
 
-        protected Color32 GetRawPixelColor(Vector2Int pos)
+        protected internal Color32 GetRawPixelColor(Vector2Int pos)
         {
             return GetRawPixelColor(pos.x, pos.y);
         }

@@ -6,13 +6,6 @@ using UnityEngine;
 
 namespace ArashGh.Pixelator.Runtime.DataStructures
 {
-    public enum SelectionType2D
-    {
-        Remove = -1,
-        Replace = 0,
-        Add = 1
-    }
-
     public class LayerSelection
     {
         public List<Vector2Int> SelectionList = new List<Vector2Int>();
@@ -78,7 +71,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             _overlay = _selections._selectionLayer;
         }
 
-        public void RectangleSelect(Vector2Int start, Vector2Int end, SelectionType2D selectionType = 0)
+        public void RectangleSelect(Vector2Int start, Vector2Int end)
         {
             int x = Mathf.Min(start.x, end.x), y = Mathf.Min(start.y, end.y);
             int targetX = Mathf.Max(start.x, end.x), targetY = Mathf.Max(start.y, end.y);
@@ -86,45 +79,42 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             int startY = y;
 
             _tempSelection.Clear();
-            if (selectionType == 0)
-            {
-                Deselect();
-            }
+            Deselect();
 
             while (x <= targetX)
             {
                 while (y <= targetY)
                 {
-                    SelectPosition(x, y, selectionType);
+                    SelectPosition(x, y);
                     y += 1;
                 }
 
                 x += 1;
                 y = startY;
             }
+
+            ApplySelection();
         }
 
-        public void MagicSelect(Vector2Int startPosition, SelectionType2D selectionType = 0)
+        public void MagicSelect(Vector2Int startPosition)
         {
             var startColor = GetPixelColor(startPosition);
 
-            _tempSelection.Clear();
-            if (selectionType == 0)
-            {
-                Deselect();
-            }
+            Deselect();
 
-            InternalMagicSelect(startPosition.x, startPosition.y, startColor, selectionType);
+            InternalMagicSelect(startPosition.x, startPosition.y, startColor);
 
             foreach (var selection in _tempSelection)
             {
-                SelectPosition(selection.x, selection.y, selectionType);
+                SelectPosition(selection.x, selection.y);
             }
 
             _tempSelection.Clear();
+
+            ApplySelection();
         }
 
-        private void InternalMagicSelect(int x, int y, Color32 startColor, SelectionType2D selectionType = 0)
+        private void InternalMagicSelect(int x, int y, Color32 startColor)
         {
             var position = new Vector2Int(x, y);
             var isSelected = _tempSelection.Contains(position);
@@ -139,34 +129,24 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
                 _tempSelection.Add(position);
             }
 
-            InternalMagicSelect(x - 1, y, startColor, selectionType);
-            InternalMagicSelect(x + 1, y, startColor, selectionType);
-            InternalMagicSelect(x, y - 1, startColor, selectionType);
-            InternalMagicSelect(x, y + 1, startColor, selectionType);
+            InternalMagicSelect(x - 1, y, startColor);
+            InternalMagicSelect(x + 1, y, startColor);
+            InternalMagicSelect(x, y - 1, startColor);
+            InternalMagicSelect(x, y + 1, startColor);
         }
 
-        private void SelectPosition(Vector2Int position, SelectionType2D selectionType = 0)
+        private void SelectPosition(Vector2Int position)
         {
-            SelectPosition(position.x, position.y, selectionType);
+            SelectPosition(position.x, position.y);
         }
 
-        private void SelectPosition(int x, int y, SelectionType2D selectionType = 0)
+        private void SelectPosition(int x, int y)
         {
             var position = new Vector2Int(x, y);
 
-            if (selectionType >= 0)
+            if (!_selections.SelectionList.Contains(position))
             {
-                if (!_selections.SelectionList.Contains(position))
-                {
-                    _selections.SelectionList.Add(position);
-                }
-            }
-            else if (selectionType < 0)
-            {
-                if (_selections.SelectionList.Contains(position))
-                {
-                    _selections.SelectionList.Remove(position);
-                }
+                _selections.SelectionList.Add(position);
             }
         }
 

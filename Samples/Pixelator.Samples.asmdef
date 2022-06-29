@@ -2,7 +2,7 @@
     "name": "Pixelator.Samples",
     "rootNamespace": "ArashGh.Pixelator.Samples",
     "references": [
-        "ArashGh.Pixelator"
+        "Pixelator"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

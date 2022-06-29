@@ -1,12 +1,18 @@
 {
-  "name": "ArashGh.Pixelator.Editor",
-  "references": [
-    "ArashGh.Pixelator"
-  ],
-  "optionalUnityReferences": [
-  ],
-  "includePlatforms": [
-    "Editor"
-  ],
-  "excludePlatforms": []
+    "name": "Pixelator.Editor",
+    "rootNamespace": "",
+    "references": [
+        "ArashGh.Pixelator"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

@@ -24,8 +24,8 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
 
             _minX = 0;
             _minY = 0;
-            _maxX = width;
-            _maxY = height;
+            _maxX = width - 1;
+            _maxY = height - 1;
 
             for (int y = 0; y < _height; y++)
             {
