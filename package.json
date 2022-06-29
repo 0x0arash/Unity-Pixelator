@@ -5,7 +5,7 @@
         "name": "Arash Ghorban",
         "url": "https://github.com/ArashGh"
     },
-    "license": "MIT",
+    "license": "Apache-2.0",
     "description": "A unity editor utility to generate pixel-art for your games.",
     "displayName": "Unity Pixelator",
     "keywords": [
