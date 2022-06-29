@@ -14,7 +14,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
 
         public void Clear()
         {
-            Fill(new Color32(0, 0, 0, 0));
+            Fill(PixelCollection.transparent);
         }
 
         public void Fill(Color32 color)

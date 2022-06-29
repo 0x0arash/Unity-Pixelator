@@ -4,9 +4,8 @@ using UnityEngine;
 
 namespace ArashGh.Pixelator.Runtime.DataStructures
 {
-    public class Layer : ISelectable
+    public class BaseLayer : ISelectable
     {
-        private readonly Image _image;
         private readonly string _name;
 
         public string Name
@@ -17,6 +16,21 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             }
         }
 
+        internal BaseLayer(string name, IDrawable parent) : base(parent.Width, parent.Height, parent)
+        {
+            _name = name;
+        }
+
+        internal BaseLayer(string name, int width, int height) : base(width, height, null)
+        {
+            _name = name;
+        }
+    }
+
+    public class Layer : BaseLayer
+    {
+        private readonly Image _image;
+
         public Image Image
         {
             get
@@ -25,15 +39,9 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             }
         }
 
-        public Layer(string name, Image image) : base(image.Width, image.Height, image._renderLayer)
+        public Layer(string name, Image image) : base(name, image._renderLayer)
         {
-            _name = name;
             _image = image;
-        }
-
-        internal Layer(string name, int width, int height) : base(width, height, null)
-        {
-            _name = name;
         }
 
         public void Remove()
