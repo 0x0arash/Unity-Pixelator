@@ -9,7 +9,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
         private int _width, _height;
 
         private readonly List<Layer> _layers;
-        protected internal Layer _renderLayer;
+        protected internal BaseLayer _renderLayer;
 
         public List<Layer> Layers
         {
@@ -35,7 +35,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             _width = width;
             _height = height;
 
-            _renderLayer = new Layer("RenderLayer", _width, _height);
+            _renderLayer = new BaseLayer("RenderLayer", _width, _height);
             _layers = new List<Layer>
             {
                 new Layer("Base", this)

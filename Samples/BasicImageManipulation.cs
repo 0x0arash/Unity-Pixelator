@@ -1,4 +1,5 @@
 using ArashGh.Pixelator.Runtime.DataStructures;
+using ArashGh.Pixelator.Runtime.Oulines;
 using ArashGh.Pixelator.Runtime.Primitives;
 using System;
 using UnityEngine;
@@ -53,6 +54,12 @@ namespace ArashGh.Pixelator.Samples
             // MoveSelection will move the selected pixels by the specified amount
             movableLayer.MoveSelection(20 ,18);
             movableLayer.FillSelection(Color.white);
+            //movableLayer.Deselect();
+
+            // Outline2D.OutlineLayer(movableLayer, Color.magenta, 1);
+            // Outline2D.OutlineLayerContent(movableLayer, Color.magenta, true, 3);
+            Outline2D.OutlineSelection(movableLayer.GetSelections(), Color.magenta, false, false, 1);
+
             movableLayer.Deselect();
 
             image.Render();

@@ -8,16 +8,18 @@ using UnityEngine;
 
 namespace ArashGh.Pixelator.Runtime.DataStructures
 {
-    public abstract class IDrawable
+    public class IDrawable
     {
         private Vector2Int _position;
         private readonly int _width, _height;
         private readonly Texture2D _texture;
+
+        private bool _needRender = true;
+        private Color32[] _temporaryPixelArray;
+
         protected IDrawable _parent;
         protected IDrawable _overlay;
         protected PixelCollection _pixels;
-        private bool _needRender = true;
-        private Color32[] _temporaryPixelArray;
 
         protected internal bool NeedRender
         {
@@ -60,7 +62,7 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             }
         }
 
-        public IDrawable(int width, int height, IDrawable parent)
+        internal IDrawable(int width, int height, IDrawable parent)
         {
             _width = width;
             _height = height;
@@ -73,6 +75,11 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             {
                 filterMode = FilterMode.Point
             };
+        }
+
+        internal PixelCollection GetPixelCollection()
+        {
+            return _pixels;
         }
 
         public virtual void Render(bool forceRender = false)
@@ -111,17 +118,27 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
                 pos += _parent._position;
             }
 
-            return _overlay != null ?
-                Color32.Lerp(_pixels[x - pos.x, y - pos.y], _overlay.GetPixelColor(x, y), _overlay.GetPixelColor(x, y).a / 255.0f) :
-                _pixels[x - pos.x, y - pos.y];
+            //return _overlay != null ?
+            //    Color32.Lerp(_pixels[x - pos.x, y - pos.y], _overlay.GetPixelColor(x, y), _overlay.GetPixelColor(x, y).a / 255.0f) :
+            //    _pixels[x - pos.x, y - pos.y];
+
+            return _pixels[x - pos.x, y - pos.y];
         }
 
         protected Color32 GetRawPixelColor(int x, int y)
         {
-            return _overlay != null ?
-                Color32.Lerp(_pixels[x, y],
-                _overlay.GetRawPixelColor(new Vector2Int(x, y) - _overlay._position), _overlay.GetRawPixelColor(new Vector2Int(x, y) - _overlay._position).a / 255.0f) :
-                _pixels[x, y];
+            //if (_overlay != null)
+            //{
+            //    var overlayColor = _overlay.GetPixelColor(x, y);
+            //    return Color32.Lerp(_pixels[x, y], overlayColor, overlayColor.a / 255.0f);
+            //}
+
+            return _pixels[x, y];
+
+            //return _overlay != null ?
+            //    Color32.Lerp(_pixels[x, y],
+            //    _overlay.GetRawPixelColor(new Vector2Int(x, y) - _overlay._position), _overlay.GetRawPixelColor(new Vector2Int(x, y) - _overlay._position).a / 255.0f) :
+            //    _pixels[x, y];
         }
 
         protected Color32 GetRawPixelColor(Vector2Int pos)
@@ -139,12 +156,12 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             SetPixelColor(position.x, position.y, color);
         }
 
-        protected void SetRawPixelColor(Vector2Int pos, Color32 color)
+        protected internal void SetRawPixelColor(Vector2Int pos, Color32 color)
         {
             SetRawPixelColor(pos.x, pos.y, color);
         }
 
-        protected void SetRawPixelColor(int x, int y, Color32 color)
+        protected internal void SetRawPixelColor(int x, int y, Color32 color)
         {
             if (_pixels[x, y].IsEqualTo(color))
                 return;
@@ -168,27 +185,52 @@ namespace ArashGh.Pixelator.Runtime.DataStructures
             NeedRender = true;
         }
 
-        public void WriteLayerOnTop(IDrawable layer)
+        internal void WriteLayerOnTop(IDrawable topLayer)
         {
-            var keys = _pixels.Keys.ToList();
-            keys.AddRange(layer._pixels.Keys);
+            var layer = Clone(topLayer);
+
+            if(layer._overlay != null)
+            {
+                layer.WriteLayerOnTop(layer._overlay);
+            }
+
+            var keys = layer._pixels.Keys.Union(_pixels.Keys);
 
             foreach (var key in keys)
             {
                 if (!layer._pixels.Keys.Contains(key))
                     continue;
 
-                if (!_pixels.ContainsKey(key + layer.Position))
+                if (!_pixels.ContainsKey(key + layer._position))
                 {
-                    SetPixelColor(key + layer.Position, layer.GetRawPixelColor(key));
+                    SetRawPixelColor(key + layer._position, layer.GetRawPixelColor(key));
                 }
                 else
                 {
-                    SetPixelColor(key + layer.Position, Color32.Lerp(GetPixelColor(key + layer.Position),
+                    SetRawPixelColor(key + layer._position, Color32.Lerp(GetRawPixelColor(key + layer._position),
                         layer.GetRawPixelColor(key),
                         layer.GetRawPixelColor(key).a / 255.0f));
                 }
             }
+        }
+
+        public static IDrawable Clone(IDrawable drawable)
+        {
+            var result = new IDrawable(drawable._width, drawable._height, drawable._parent);
+
+            result._position = drawable._position;
+            result._overlay = drawable._overlay;
+
+            (Vector2Int min, Vector2Int max) = drawable._pixels.GetMinMax();
+            for (int x = min.x; x <= max.x; x++)
+            {
+                for (int y = min.y; y <= max.y; y++)
+                {
+                    result._pixels[x, y] = drawable._pixels[x, y];
+                }
+            }
+
+            return result;
         }
 
         public void ExportRenderedImage(string path)

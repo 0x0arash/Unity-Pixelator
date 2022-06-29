@@ -49,7 +49,7 @@ namespace ArashGh.Pixelator.Runtime.Primitives
 
         public static void DrawCircle(Layer layer, Vector2Int position, int radius, Color32 outlineColor, bool fill = false, Color32 fillColor = default)
         {
-            var newLayer = new Layer("TemporaryPrimitive", layer.Width, layer.Height);
+            var newLayer = new BaseLayer("TemporaryPrimitive", layer.Width, layer.Height);
 
             int y = radius, x = 0, d = 1 - radius;
 
